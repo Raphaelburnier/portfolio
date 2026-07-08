@@ -384,6 +384,22 @@
       100% { opacity: 0; transform: scale(1.06) rotate(-6deg); }
     }
 
+    /* Mots comics au clic (mode arcane) */
+    .arc-pop {
+      position: fixed;
+      z-index: 90;
+      pointer-events: none;
+      font-family: 'Permanent Marker', 'Space Grotesk', sans-serif;
+      white-space: nowrap;
+      animation: arc-pop 0.7s cubic-bezier(0.2, 1.6, 0.4, 1) forwards;
+    }
+    @keyframes arc-pop {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3) rotate(var(--rot, 0deg)); }
+      20% { opacity: 1; transform: translate(-50%, -50%) scale(1.15) rotate(var(--rot, 0deg)); }
+      60% { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -130%) scale(1) rotate(var(--rot, 0deg)); }
+    }
+
     /* Bouton toggle arcane : état actif */
     html.arcane #arcane-toggle {
       color: var(--arc-teal);
@@ -394,6 +410,7 @@
       html.arcane .arcane-bg svg,
       html.arcane .arc-glitch { animation: none !important; }
       .boom-overlay { display: none !important; }
+      .arc-pop { display: none !important; }
       html { scroll-behavior: auto; }
       .reveal { opacity: 1; transform: none; transition: none; }
       .animate-float, .animate-fade-up { animation: none !important; }
@@ -1273,6 +1290,29 @@ Fullstack covered the web side. This period was mostly me poking around the rest
       }
     });
     syncArcaneBtn();
+
+    // ---- Mots comics au clic (mode arcane uniquement) ----
+    const POP_WORDS = ['BOOM!', 'BAM!', 'POW!', 'ZAP!', 'HAHA!', 'KABOOM!', 'WHAM!'];
+    document.addEventListener('click', (e) => {
+      if (!root.classList.contains('arcane')) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (e.target.closest('#arcane-toggle, #theme-toggle')) return;
+      const pop = document.createElement('span');
+      pop.className = 'arc-pop';
+      pop.setAttribute('aria-hidden', 'true');
+      pop.textContent = POP_WORDS[Math.floor(Math.random() * POP_WORDS.length)];
+      const teal = Math.random() < 0.5;
+      pop.style.color = teal ? '#2ee6c8' : '#ff3fa4';
+      pop.style.textShadow = teal
+        ? '3px 3px 0 #ff3fa4, 0 0 14px rgba(46, 230, 200, 0.7)'
+        : '3px 3px 0 #2ee6c8, 0 0 14px rgba(255, 63, 164, 0.7)';
+      pop.style.left = e.clientX + 'px';
+      pop.style.top = e.clientY + 'px';
+      pop.style.fontSize = (1.1 + Math.random() * 1.2) + 'rem';
+      pop.style.setProperty('--rot', (Math.random() * 30 - 15) + 'deg');
+      document.body.appendChild(pop);
+      setTimeout(() => pop.remove(), 750);
+    });
 
     // ---- Menu mobile ----
     const menuToggle = document.getElementById('menu-toggle');
