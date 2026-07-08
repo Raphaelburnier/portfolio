@@ -11,7 +11,9 @@
     (function () {
       const stored = localStorage.getItem('theme');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (stored === 'dark' || (!stored && prefersDark)) {
+      if (stored === 'arcane') {
+        document.documentElement.classList.add('dark', 'arcane');
+      } else if (stored === 'dark' || (!stored && prefersDark)) {
         document.documentElement.classList.add('dark');
       }
     })();
@@ -67,7 +69,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Permanent+Marker&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
 
   <style>
     /* Dégradé de texte sunset réutilisable */
@@ -187,7 +189,211 @@
     .cert-accordion[open] .cert-body { grid-template-rows: 1fr; }
     .cert-accordion .cert-body > div { overflow: hidden; }
 
+    /* ============================================================
+       MODE ARCANE (thème Jinx / League of Legends)
+       Activé par la classe .arcane sur <html> (en plus de .dark)
+       ============================================================ */
+    :root.arcane {
+      --arc-bg: #0a0a12;
+      --arc-teal: #2ee6c8;
+      --arc-pink: #ff3fa4;
+    }
+    /* Fond global sombre bleuté */
+    html.arcane body {
+      background-color: var(--arc-bg);
+      color: #e7e9f3;
+    }
+    /* Couche de graffitis en fond, fixée derrière tout le contenu */
+    .arcane-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    html.arcane .arcane-bg { display: block; }
+    html.arcane main,
+    html.arcane #navbar,
+    html.arcane footer { position: relative; z-index: 1; }
+    .arcane-bg svg { position: absolute; }
+    .arcane-tag-teal { color: var(--arc-teal); opacity: 0.16; }
+    .arcane-tag-pink { color: var(--arc-pink); opacity: 0.16; }
+    @keyframes arc-drift {
+      0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+      50% { transform: translateY(-10px) rotate(var(--r, 0deg)); }
+    }
+    html.arcane .arcane-bg svg { animation: arc-drift 9s ease-in-out infinite; }
+
+    /* Halo néon de fond (remplace l'aurora orange) */
+    html.arcane .aurora {
+      background:
+        radial-gradient(45rem 32rem at 82% -8%, rgba(46, 230, 200, 0.20), transparent 60%),
+        radial-gradient(42rem 30rem at 4% 12%, rgba(255, 63, 164, 0.20), transparent 58%);
+    }
+
+    /* Titres en typo graffiti + glow néon */
+    html.arcane h1,
+    html.arcane h2 {
+      font-family: 'Permanent Marker', 'Space Grotesk', system-ui, sans-serif;
+      letter-spacing: 0.01em;
+    }
+    html.arcane h2 {
+      color: var(--arc-teal);
+      text-shadow: 0 0 12px rgba(46, 230, 200, 0.55), 0 0 30px rgba(46, 230, 200, 0.25);
+    }
+    /* Le dégradé de texte du hero passe teal -> pink */
+    html.arcane .text-sunset-gradient {
+      background: linear-gradient(100deg, #2ee6c8 0%, #4bd0ff 40%, #ff3fa4 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    /* Kickers et accents orange -> teal */
+    html.arcane .text-sunset-600,
+    html.arcane .text-sunset-400,
+    html.arcane .dark\:text-sunset-400 {
+      color: var(--arc-teal) !important;
+    }
+
+    /* Cartes : verre sombre, bordure néon, glow au survol */
+    html.arcane .bg-white,
+    html.arcane .dark\:bg-slate-900\/60,
+    html.arcane .dark\:bg-slate-900 {
+      background-color: rgba(16, 18, 32, 0.72) !important;
+      backdrop-filter: blur(6px);
+    }
+    html.arcane .border-slate-200,
+    html.arcane .dark\:border-white\/10 {
+      border-color: rgba(46, 230, 200, 0.28) !important;
+    }
+    html.arcane .group:hover {
+      box-shadow: 0 0 0 1px rgba(255, 63, 164, 0.5), 0 12px 40px -12px rgba(46, 230, 200, 0.5) !important;
+    }
+    /* Tags/pills teal translucide */
+    html.arcane .bg-sunset-50,
+    html.arcane .dark\:bg-sunset-500\/10 {
+      background-color: rgba(46, 230, 200, 0.12) !important;
+    }
+    html.arcane .text-sunset-700,
+    html.arcane .dark\:text-sunset-300 {
+      color: var(--arc-teal) !important;
+    }
+
+    /* CTA et dégradés sunset -> teal/pink */
+    html.arcane .from-sunset-500 { --tw-gradient-from: #2ee6c8 var(--tw-gradient-from-position); }
+    html.arcane .to-plum-500,
+    html.arcane .to-plum-600 { --tw-gradient-to: #ff3fa4 var(--tw-gradient-to-position); }
+    html.arcane .from-sunset-400,
+    html.arcane .from-sunset-500,
+    html.arcane .via-sunset-500,
+    html.arcane .via-sunset-600 { --tw-gradient-from: #2ee6c8 var(--tw-gradient-from-position); }
+
+    /* Glitch discret sur le nom du hero */
+    @keyframes arc-glitch {
+      0%, 92%, 100% { transform: none; filter: none; }
+      93% { transform: translate(-2px, 1px); filter: drop-shadow(2px 0 var(--arc-pink)) drop-shadow(-2px 0 var(--arc-teal)); }
+      95% { transform: translate(2px, -1px); filter: drop-shadow(-2px 0 var(--arc-pink)) drop-shadow(2px 0 var(--arc-teal)); }
+      97% { transform: none; }
+    }
+    html.arcane .arc-glitch { animation: arc-glitch 5s steps(1) infinite; }
+
+    /* Images Jinx : visibles en mode arcane uniquement */
+    .jinx-hero, .jinx-sitting { display: none; }
+    html.arcane .hero-card { display: none; }
+    html.arcane .jinx-hero {
+      display: block;
+      filter: drop-shadow(0 0 24px rgba(46, 230, 200, 0.35)) drop-shadow(0 14px 34px rgba(255, 63, 164, 0.25));
+    }
+    html.arcane #contact { position: relative; }
+    html.arcane .jinx-sitting {
+      display: block;
+      position: absolute;
+      top: calc(6rem - 158px);
+      right: 7%;
+      width: 170px;
+      pointer-events: none;
+      filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.5));
+    }
+    @media (max-width: 640px) {
+      html.arcane .jinx-sitting { display: none; }
+    }
+
+    /* ---- Animation BOOM : grenade qui tombe puis explose ---- */
+    .boom-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      place-items: center;
+      background: rgba(6, 6, 14, 0.55);
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .boom-overlay.playing { display: grid; }
+    .boom-overlay > * { grid-area: 1 / 1; margin: auto; }
+    .boom-grenade { width: 130px; height: 130px; opacity: 0; }
+    .playing .boom-grenade {
+      animation: boom-drop 0.55s cubic-bezier(0.45, 0, 0.9, 0.6) forwards;
+    }
+    @keyframes boom-drop {
+      0% { opacity: 1; transform: translateY(-60vh) rotate(-520deg) scale(0.7); }
+      96% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(0) rotate(0deg) scale(1.05); }
+    }
+    .boom-flash {
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(255, 255, 255, 0.95), rgba(46, 230, 200, 0.5) 35%, transparent 70%);
+      opacity: 0;
+    }
+    .playing .boom-flash { animation: boom-flash 0.5s ease-out 0.52s forwards; }
+    @keyframes boom-flash {
+      0% { opacity: 0; }
+      15% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    .boom-ring {
+      width: 40px;
+      height: 40px;
+      border-radius: 9999px;
+      border: 5px solid #2ee6c8;
+      opacity: 0;
+    }
+    .boom-ring.pink { border-color: #ff3fa4; }
+    .playing .boom-ring { animation: boom-ring 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards; }
+    .playing .boom-ring.pink { animation-delay: 0.63s; }
+    @keyframes boom-ring {
+      0% { opacity: 0.9; transform: scale(0.3); }
+      100% { opacity: 0; transform: scale(14); }
+    }
+    .boom-text {
+      font-family: 'Permanent Marker', 'Space Grotesk', sans-serif;
+      font-size: clamp(4rem, 14vw, 9rem);
+      color: #2ee6c8;
+      text-shadow: 4px 4px 0 #ff3fa4, 0 0 30px rgba(46, 230, 200, 0.8), 0 0 60px rgba(255, 63, 164, 0.6);
+      opacity: 0;
+      transform: scale(0.2) rotate(-6deg);
+    }
+    .playing .boom-text { animation: boom-text 1.05s cubic-bezier(0.2, 2, 0.4, 1) 0.58s forwards; }
+    @keyframes boom-text {
+      0% { opacity: 0; transform: scale(0.2) rotate(-6deg); }
+      18% { opacity: 1; transform: scale(1.18) rotate(-6deg); }
+      32% { transform: scale(1) rotate(-6deg); }
+      80% { opacity: 1; }
+      100% { opacity: 0; transform: scale(1.06) rotate(-6deg); }
+    }
+
+    /* Bouton toggle arcane : état actif */
+    html.arcane #arcane-toggle {
+      color: var(--arc-teal);
+      box-shadow: 0 0 0 1px rgba(46, 230, 200, 0.5), 0 0 16px rgba(46, 230, 200, 0.4);
+    }
+
     @media (prefers-reduced-motion: reduce) {
+      html.arcane .arcane-bg svg,
+      html.arcane .arc-glitch { animation: none !important; }
+      .boom-overlay { display: none !important; }
       html { scroll-behavior: auto; }
       .reveal { opacity: 1; transform: none; transition: none; }
       .animate-float, .animate-fade-up { animation: none !important; }
@@ -207,6 +413,79 @@
     Skip to content
   </a>
 
+  <!-- ============ FOND GRAFFITI (mode Arcane uniquement) ============ -->
+  <div class="arcane-bg" aria-hidden="true">
+    <!-- Grand X magenta, coup de pinceau -->
+    <svg class="arcane-tag-pink" style="top:6%;left:4%;--r:-8deg" width="140" height="140" viewBox="0 0 100 100" fill="currentColor">
+      <path d="M14 10 L30 6 L52 40 L74 8 L90 14 L60 52 L92 90 L74 96 L50 62 L28 94 L10 88 L42 50 Z" />
+    </svg>
+    <!-- HAHAHA teal -->
+    <svg class="arcane-tag-teal" style="top:12%;left:34%;--r:-4deg" width="260" height="90" viewBox="0 0 260 90" fill="currentColor" font-family="'Permanent Marker',sans-serif">
+      <text x="0" y="60" font-size="58">HAHAHA</text>
+    </svg>
+    <!-- BOOM! magenta -->
+    <svg class="arcane-tag-pink" style="top:24%;right:5%;--r:6deg" width="180" height="80" viewBox="0 0 180 80" fill="currentColor">
+      <text x="0" y="58" font-size="52" font-family="'Permanent Marker',sans-serif">BOOM!</text>
+    </svg>
+    <!-- Smiley édenté teal -->
+    <svg class="arcane-tag-teal" style="top:44%;left:6%;--r:5deg" width="150" height="120" viewBox="0 0 120 96" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="26" cy="24" r="3" fill="currentColor" stroke="none" />
+      <path d="M56 16 l14 12 M70 16 l-14 12" />
+      <path d="M12 44 c14 30 40 44 66 40" />
+      <path d="M20 48 l6 14 6 -12 7 14 7 -13 7 13 6 -12 6 11" />
+    </svg>
+    <!-- Couronne magenta -->
+    <svg class="arcane-tag-pink" style="top:56%;left:40%;--r:-6deg" width="120" height="100" viewBox="0 0 100 84" fill="currentColor">
+      <path d="M8 70 L4 22 L28 46 L50 8 L72 46 L96 22 L92 70 Z" />
+      <circle cx="50" cy="30" r="4" fill="#0a0a12" />
+    </svg>
+    <!-- Dents teal -->
+    <svg class="arcane-tag-teal" style="bottom:8%;right:8%;--r:4deg" width="150" height="90" viewBox="0 0 130 78" fill="currentColor">
+      <path d="M6 8 h118 v10 l-9 26 -9 -18 -9 20 -9 -20 -9 22 -9 -20 -9 20 -9 -18 -9 26 -9 -26 z" />
+    </svg>
+    <!-- Papillon (crâne) teal -->
+    <svg class="arcane-tag-teal" style="bottom:12%;left:12%;--r:-5deg" width="150" height="120" viewBox="0 0 120 96" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round">
+      <path d="M60 30 C40 4 8 8 10 40 C12 78 44 74 60 54 C76 74 108 78 110 40 C112 8 80 4 60 30 Z" />
+      <circle cx="38" cy="38" r="8" fill="currentColor" stroke="none" />
+      <circle cx="82" cy="38" r="8" fill="currentColor" stroke="none" />
+      <path d="M60 32 v40 M54 78 h12" />
+    </svg>
+    <!-- X barré magenta petit -->
+    <svg class="arcane-tag-pink" style="top:70%;right:22%;--r:10deg" width="70" height="70" viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round">
+      <path d="M10 10 L50 50 M50 10 L10 50" />
+    </svg>
+    <!-- Point d'exclamation magenta -->
+    <svg class="arcane-tag-pink" style="top:8%;right:26%;--r:-3deg" width="40" height="120" viewBox="0 0 30 100" fill="currentColor">
+      <path d="M8 4 h14 l-3 62 h-8 z" /><circle cx="15" cy="86" r="9" />
+    </svg>
+    <!-- Éclair teal -->
+    <svg class="arcane-tag-teal" style="top:36%;right:30%;--r:8deg" width="70" height="130" viewBox="0 0 50 100" fill="currentColor">
+      <path d="M28 2 L6 56 h16 L14 98 L44 40 H26 Z" />
+    </svg>
+  </div>
+
+  <!-- ============ OVERLAY BOOM (activation du mode arcane) ============ -->
+  <div id="boom-overlay" class="boom-overlay" aria-hidden="true">
+    <!-- Grenade chomper stylisee -->
+    <svg class="boom-grenade" viewBox="0 0 120 120" fill="none">
+      <circle cx="62" cy="74" r="34" fill="#232838" stroke="#3a4258" stroke-width="3" />
+      <circle cx="46" cy="102" r="7" fill="#2c3244" /><circle cx="62" cy="106" r="7" fill="#2c3244" /><circle cx="78" cy="102" r="7" fill="#2c3244" />
+      <path d="M43 102h6M46 99v6M59 106h6M62 103v6M75 102h6M78 99v6" stroke="#151928" stroke-width="2" />
+      <circle cx="62" cy="106" r="3" fill="#4bd0ff" />
+      <path d="M20 34 L56 22 L88 30 L84 48 L52 54 L26 50 Z" fill="#aab3c7" stroke="#7d8699" stroke-width="2" />
+      <path d="M24 52 L50 58 L46 74 L28 68 Z" fill="#98a2b8" stroke="#7d8699" stroke-width="2" />
+      <circle cx="78" cy="34" r="7" fill="#0d1122" /><circle cx="78" cy="34" r="4" fill="#4bd0ff" />
+      <path d="M34 32 l8 -6 l-2 10 l8 -5 M60 34 l10 -6 l-4 12 l10 -6" stroke="#2ee6c8" stroke-width="2.5" stroke-linecap="round" />
+      <path d="M82 78 l3 -8 l3 8 l8 1 l-6 5 l2 8 l-7 -4 l-7 4 l2 -8 l-6 -5 Z" fill="#ff3fa4" />
+      <path d="M36 78 q6 4 2 10 M44 88 l6 6" stroke="#ff3fa4" stroke-width="3" stroke-linecap="round" />
+      <circle cx="88" cy="18" r="8" stroke="#8b5f4b" stroke-width="4" fill="none" />
+    </svg>
+    <span class="boom-ring"></span>
+    <span class="boom-ring pink"></span>
+    <div class="boom-flash"></div>
+    <div class="boom-text">BOOM!</div>
+  </div>
+
   <!-- ============ NAVBAR ============ -->
   <header id="navbar" class="fixed inset-x-0 top-0 z-50 transition-all duration-300">
     <nav class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
@@ -225,6 +504,16 @@
       </ul>
 
       <div class="flex items-center gap-2">
+        <!-- Toggle mode Arcane -->
+        <button id="arcane-toggle" type="button" aria-label="Toggle Arcane mode" aria-pressed="false"
+          class="grid h-11 w-11 place-items-center rounded-full text-slate-600 transition-all hover:bg-slate-900/5 hover:text-sunset-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sunset-500 dark:text-slate-300 dark:hover:bg-white/10 cursor-pointer">
+          <!-- Smiley édenté de Jinx -->
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="9" cy="9" r="1" /><path d="M14 8l2.5 2.5M16.5 8L14 10.5" />
+            <path d="M5 14c1.5 3 4 4.5 7 4.5s5.5-1.5 7-4.5" />
+            <path d="M7 15l1 2 1.5-1.5L11 17l1.5-1.5L14 17l1.5-1.5L17 15" />
+          </svg>
+        </button>
         <!-- Toggle thème -->
         <button id="theme-toggle" type="button" aria-label="Toggle light/dark theme"
           class="grid h-11 w-11 place-items-center rounded-full text-slate-600 transition-colors hover:bg-slate-900/5 hover:text-sunset-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sunset-500 dark:text-slate-300 dark:hover:bg-white/10 cursor-pointer">
@@ -274,7 +563,7 @@
             Available for new projects
           </p>
           <h1 class="font-display text-4xl font-bold leading-[1.1] tracking-tight text-slate-900 dark:text-white sm:text-6xl">
-          <span class="text-sunset-gradient">Raphael Burnier</span>.<br />
+          <span class="text-sunset-gradient arc-glitch">Raphael Burnier</span>.<br />
             Data Scientist &amp; AI Engineer.
           </h1>
           <p class="mt-6 max-w-xl text-lg leading-relaxed text-slate-600 dark:text-slate-400">
@@ -294,7 +583,9 @@
 
         <!-- Visuel décoratif -->
         <div class="relative hidden md:block" aria-hidden="true">
-          <div class="animate-float mx-auto aspect-square w-full max-w-sm rounded-[2rem] bg-gradient-to-br from-sunset-400 via-sunset-600 to-plum-500 shadow-2xl shadow-sunset-500/30">
+          <img src="assets/jinx-sticker.png" alt="" loading="lazy" onerror="this.style.display='none'"
+            class="jinx-hero animate-float mx-auto w-full max-w-sm" />
+          <div class="hero-card animate-float mx-auto aspect-square w-full max-w-sm rounded-[2rem] bg-gradient-to-br from-sunset-400 via-sunset-600 to-plum-500 shadow-2xl shadow-sunset-500/30">
             <div class="flex h-full flex-col justify-between p-8 text-white">
               <div class="flex gap-1.5">
                 <span class="h-3 w-3 rounded-full bg-white/40"></span>
@@ -685,7 +976,7 @@
                 Demo
                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10" /></svg>
               </a>
-              <a href="" class="inline-flex items-center gap-1 text-slate-500 transition-colors hover:text-sunset-500 dark:text-slate-400">
+              <a href="" class="inline-flex items-center gap-1 text-slate-600 transition-colors hover:text-sunset-500 dark:text-slate-400">
                 Code
                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6" /></svg>
               </a>
@@ -718,7 +1009,7 @@
                 Demo
                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10" /></svg>
               </a>
-              <a href="#" class="inline-flex items-center gap-1 text-slate-500 transition-colors hover:text-sunset-500 dark:text-slate-400">
+              <a href="#" class="inline-flex items-center gap-1 text-slate-600 transition-colors hover:text-sunset-500 dark:text-slate-400">
                 Code
                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6" /></svg>
               </a>
@@ -752,7 +1043,7 @@ I built it mostly to see how far you can push prompt engineering before you actu
                   Demo
                   <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10" /></svg>
                 </a>
-                <a href="https://github.com/anthamo/StorIA" class="inline-flex items-center gap-1 text-slate-500 transition-colors hover:text-sunset-500 dark:text-slate-400">
+                <a href="https://github.com/anthamo/StorIA" class="inline-flex items-center gap-1 text-slate-600 transition-colors hover:text-sunset-500 dark:text-slate-400">
                   Code
                   <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6" /></svg>
                 </a>
@@ -791,7 +1082,7 @@ Getting the transcription accurate enough to be useful, in real time, turned out
                 Demo
                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10" /></svg>
               </a>
-              <a href="#" class="inline-flex items-center gap-1 text-slate-500 transition-colors hover:text-sunset-500 dark:text-slate-400">
+              <a href="#" class="inline-flex items-center gap-1 text-slate-600 transition-colors hover:text-sunset-500 dark:text-slate-400">
                 Code
                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6" /></svg>
               </a>
@@ -846,7 +1137,7 @@ I started here on purpose: a field where you see results fast, and a solid enoug
                 </div>
                 <p class="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-400">
                   CS50 · Harvard
-Fullstack covered the web side. This period was mostly me poking around the rest of computer science — CS50, plus a lot of YouTube and random tutorials, chasing whatever looked interesting that week.
+Fullstack covered the web side. This period was mostly me poking around the rest of computer science: CS50, plus a lot of YouTube and random tutorials, chasing whatever looked interesting that week.
                 </p>
               </div>
             </li>
@@ -923,6 +1214,7 @@ Fullstack covered the web side. This period was mostly me poking around the rest
           </div>
         </div>
       </div>
+      <img src="assets/jinx-sitting.png" alt="" loading="lazy" onerror="this.style.display='none'" class="jinx-sitting" />
     </section>
   </main>
 
@@ -937,12 +1229,50 @@ Fullstack covered the web side. This period was mostly me poking around the rest
     // ---- Année du footer ----
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // ---- Toggle thème ----
+    // ---- Toggles thème (light / dark / arcane) ----
+    const root = document.documentElement;
     const themeToggle = document.getElementById('theme-toggle');
+    const arcaneToggle = document.getElementById('arcane-toggle');
+
+    function persistTheme() {
+      if (root.classList.contains('arcane')) localStorage.setItem('theme', 'arcane');
+      else if (root.classList.contains('dark')) localStorage.setItem('theme', 'dark');
+      else localStorage.setItem('theme', 'light');
+    }
+    function syncArcaneBtn() {
+      arcaneToggle.setAttribute('aria-pressed', String(root.classList.contains('arcane')));
+    }
+
+    // Light/dark : sortir d'Arcane si actif
     themeToggle.addEventListener('click', () => {
-      const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      root.classList.remove('arcane');
+      root.classList.toggle('dark');
+      persistTheme();
+      syncArcaneBtn();
     });
+
+    // Arcane : bascule le mode (force dark), avec animation BOOM
+    // a la premiere activation de la session
+    function setArcane(on) {
+      root.classList.toggle('arcane', on);
+      root.classList.toggle('dark', on);
+      persistTheme();
+      syncArcaneBtn();
+    }
+    arcaneToggle.addEventListener('click', () => {
+      const turningOn = !root.classList.contains('arcane');
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const overlay = document.getElementById('boom-overlay');
+      if (turningOn && overlay && !reduced && !sessionStorage.getItem('arcane-boom-played')) {
+        sessionStorage.setItem('arcane-boom-played', '1');
+        overlay.classList.add('playing');
+        setTimeout(() => setArcane(true), 550);
+        setTimeout(() => overlay.classList.remove('playing'), 1750);
+      } else {
+        setArcane(turningOn);
+      }
+    });
+    syncArcaneBtn();
 
     // ---- Menu mobile ----
     const menuToggle = document.getElementById('menu-toggle');
